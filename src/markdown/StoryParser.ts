@@ -5,8 +5,10 @@ import { Node } from "unist";
 import toString from "mdast-util-to-string";
 
 import Story from "./Story";
+import Epic from "./Epic";
 
 const storyHeaderDepth = 3;
+const epicHeaderDepth = 2;
 
 class StoryParser {
   filePath: string;
@@ -23,41 +25,47 @@ class StoryParser {
 
     const children = Array.isArray(tree.children) ? tree.children : [];
     let i: number = 0;
-    let story: Story | undefined;
-    let rangeNodes: Node[] = [];
-    let currentEpicName: string | undefined;
+    let story: Story;
+    let currentEpic: Epic | undefined = undefined;
     do {
-      const node = children[i];
-      if (node && node.depth === storyHeaderDepth - 1) {
-        currentEpicName = toString(node);
+      if(this.isEpicHeader(children[i])) {
+        currentEpic = new Epic({name: toString(children[i])})
+        i++
+        let epicDescriptionNodes:Node[] = []
+        while(!this.isStoryHeader(children[i]) && i < children.length) {
+          epicDescriptionNodes.push(children[i])
+          i += 1
+        }
+        currentEpic.description = remark().stringify(root(epicDescriptionNodes))
       }
 
-      if (node && node.depth === storyHeaderDepth) {
-        if (story) {
-          story.description = remark().stringify(root(rangeNodes));
-          story.epicName = currentEpicName;
-          // a new story was encountered so flush the current one
-          this.stories.push(story);
-          rangeNodes = [];
+      if(this.isStoryHeader(children[i])) {
+        story = new Story({name: toString(children[i])})
+        i += 1;
+        let storyDescriptionNodes:Node[] = [];
+        while(!this.isEpicHeader(children[i]) && !this.isStoryHeader(children[i])  && i < children.length) {
+          storyDescriptionNodes.push(children[i])
+          i += 1
         }
-        story = new Story({
-          name: toString(node),
-        });
-      } else {
-        if (node.type !== "heading" || (node.type === "heading" && node.depth > storyHeaderDepth)) {
-          rangeNodes.push(node);
-        }
+        story.epic = currentEpic
+        story.description = remark().stringify(root(storyDescriptionNodes))
+        this.stories.push(story)
       }
-      i += 1;
-    } while (i < children.length);
-    if (story) {
-      // TODO: eliminate this repetition with a better traversal
-      story.description = remark().stringify(root(rangeNodes));
-      story.epicName = currentEpicName;
-      this.stories.push(story);
-    }
+      else {
+        i += 1
+      }
+
+    } while(i < children.length)
 
     return this.stories;
+  }
+
+  private isEpicHeader(node: Node) : boolean {
+    return node && node.type === "heading" && node.depth === epicHeaderDepth
+  }
+
+  private isStoryHeader(node: Node) : boolean {
+    return node && node.type === "heading" && node.depth === storyHeaderDepth
   }
 }
 

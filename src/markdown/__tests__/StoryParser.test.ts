@@ -17,7 +17,7 @@ describe("Story Parser", () => {
   });
 
   it("creates a list of stories", () => {
-    expect(stories.length).toEqual(2);
+    expect(stories.length).toEqual(3);
   });
 
   it("creates a story with a sensible name", () => {
@@ -25,12 +25,13 @@ describe("Story Parser", () => {
   });
 
   it("creates a story with a sensible epicName", () => {
-    expect(stories[0].epicName).toEqual("Initial Import");
+    expect(stories[0].epic?.name).toEqual("Initial Import");
   });
 
   it("persists the epic name across multiple stories", () => {
-    expect(stories[1].epicName).toEqual("Initial Import");
+    expect(stories[1]?.epic?.name).toEqual("Initial Import");
   });
+
   it("creates a story with a description", () => {
     expect(stories[0].description).toBeTruthy();
     expect(stories[0].description).toMatch("Acceptance Criteria");

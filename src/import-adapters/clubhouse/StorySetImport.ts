@@ -40,8 +40,8 @@ class StorySetImport {
     // create stories
     for (const story of stories) {
       const storyChange = this.makeStoryChange(story);
-      if (story.epicName) {
-        storyChange.epic_id = epicNameIdMap.get(story.epicName);
+      if (story.epic?.name) {
+        storyChange.epic_id = epicNameIdMap.get(story.epic?.name);
       }
       await this.client.createStory(storyChange);
     }
