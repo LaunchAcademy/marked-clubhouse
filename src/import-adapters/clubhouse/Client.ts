@@ -12,7 +12,7 @@ type ClubhouseConfiguration = {
   projectId?: number;
 };
 
-class Client {
+export class Client {
   private client: ClubhouseClient<any, any>;
 
   constructor(config: ClubhouseConfiguration) {

@@ -1,56 +1,58 @@
 import { Command } from "commander";
-import fs from "fs";
+// import fs from "fs";
 import chalk from "chalk";
 import emoji from "node-emoji";
 import StoryParser from "../markdown/StoryParser";
-import Client from "../import-adapters/clubhouse/Client";
+import { Client as ClubhouseClient } from "../import-adapters/clubhouse/Client";
+import { Client as JiraClient } from "../import-adapters/jira/Client"
 
 import configuration from "../configuration";
 import normalizeStorySet from "../markdown/normalizeStorySet";
-import StorySetImport from "../import-adapters/clubhouse/StorySetImport";
+import { StorySetImport as ClubhouseStorySetImport } from "../import-adapters/clubhouse/StorySetImport";
+import { StorySetImport as JiraStorySetImport } from "../import-adapters/jira/StorySetImport";
 
-type PrecheckError = {
-  message: string;
-};
+// type PrecheckError = {
+//   message: string;
+// };
 
-const fileExists = (markdownFile): PrecheckError | undefined => {
-  if (!fs.existsSync(markdownFile)) {
-    return {
-      message: "File not found.",
-    };
-  }
-  return undefined;
-};
+// const fileExists = (markdownFile): PrecheckError | undefined => {
+//   if (!fs.existsSync(markdownFile)) {
+//     return {
+//       message: "File not found.",
+//     };
+//   }
+//   return undefined;
+// };
 
-const clubhouseTokenSet = (): PrecheckError | undefined => {
-  if (configuration.clubhouse.apiToken?.trim() === "") {
-    return {
-      message: "Clubhouse Token not set.",
-    };
-  }
-  return undefined;
-};
+// const clubhouseTokenSet = (): PrecheckError | undefined => {
+//   if (configuration.clubhouse.apiToken?.trim() === "") {
+//     return {
+//       message: "Clubhouse Token not set.",
+//     };
+//   }
+//   return undefined;
+// };
 
-const clubhouseProjectSet = (): PrecheckError | undefined => {
-  if (!configuration.clubhouse.projectId) {
-    return {
-      message: "Clubhouse Project ID not set.",
-    };
-  }
-  return undefined;
-};
+// const clubhouseProjectSet = (): PrecheckError | undefined => {
+//   if (!configuration.clubhouse.projectId) {
+//     return {
+//       message: "Clubhouse Project ID not set.",
+//     };
+//   }
+//   return undefined;
+// };
 
-const pushPrechecks = [fileExists, clubhouseTokenSet, clubhouseProjectSet];
+// const pushPrechecks = [fileExists, clubhouseTokenSet, clubhouseProjectSet];
 
 const processPush = async (markdownFile: string) => {
   let errors: string[] = [];
-  errors = pushPrechecks.reduce((list: string[], func) => {
-    const { message } = func(markdownFile) || {};
-    if (message) {
-      list = [...list, message];
-    }
-    return list;
-  }, errors);
+  // errors = pushPrechecks.reduce((list: string[], func) => {
+  //   const { message } = func(markdownFile) || {};
+  //   if (message) {
+  //     list = [...list, message];
+  //   }
+  //   return list;
+  // }, errors);
 
   if (errors.length > 0) {
     errors.forEach((error) => {
@@ -65,8 +67,15 @@ const processPush = async (markdownFile: string) => {
       if (storySet.epicMap.size > 0) {
         console.log(chalk.yellow(`${storySet.epicMap.size} epic(s) found`));
       }
-      const setImport = new StorySetImport(storySet, Client.factory(), configuration.clubhouse.projectId);
-      await setImport.create();
+      if(configuration.jira.projectKey === "") {
+        const setImport = new ClubhouseStorySetImport(storySet, ClubhouseClient.factory(), configuration.clubhouse.projectId);
+        await setImport.create();
+      }
+      else {
+        const setImport = new JiraStorySetImport(storySet, JiraClient.factory(), configuration.jira.projectKey || "" )
+        await setImport.create();
+      }
+
     } else {
       chalk.red("No stories found.");
     }

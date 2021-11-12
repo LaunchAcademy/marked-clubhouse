@@ -4,7 +4,7 @@ import StorySet from "../../markdown/StorySet";
 import Story from "../../markdown/Story";
 import { StoryChange } from "clubhouse-lib";
 
-class StorySetImport {
+export class StorySetImport {
   storySet: StorySet;
   projectId: number;
   private client: Client;
