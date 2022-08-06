@@ -19,7 +19,7 @@
     "@useshortcut/client": "^1.0.0",
     "axios": "^0.27.2",
     "commander": "^5.1.0",
-    "got": "^11.3.0",
+    "got": "^11.8.5",
     "mdast-builder": "^1.1.1",
     "mdast-util-to-string": "^1.1.0",
     "node-emoji": "^1.10.0",
