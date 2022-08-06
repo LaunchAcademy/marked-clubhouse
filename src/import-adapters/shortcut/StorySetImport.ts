@@ -2,17 +2,26 @@ import Client from "./Client";
 import StorySet from "../../markdown/StorySet";
 // import Epic from "../../markdown/Epic";
 import Story from "../../markdown/Story";
-import { StoryChange } from "clubhouse-lib";
+import { CreateStoryParams } from "@useshortcut/client";
 
 class StorySetImport {
   storySet: StorySet;
-  projectId: number;
+  projectId: number | undefined;
+  teamId: string;
+  workflowStateId: number;
   private client: Client;
 
-  constructor(storySet: StorySet, client: Client, projectId: number) {
+  constructor(
+    storySet: StorySet,
+    client: Client,
+    { projectId, teamId, workflowStateId }: { projectId?: number; teamId: string; workflowStateId: number },
+  ) {
     this.storySet = storySet;
     this.client = client;
     this.projectId = projectId;
+    this.teamId = teamId;
+    //todo: support the ability to look this up
+    this.workflowStateId = workflowStateId;
   }
 
   async create() {
@@ -47,12 +56,13 @@ class StorySetImport {
     }
   }
 
-  private makeStoryChange(story: Story): StoryChange {
+  private makeStoryChange(story: Story): CreateStoryParams {
     return {
-      name: story.name,
+      name: story.name || "",
       description: story.description,
       story_type: "feature",
       project_id: this.projectId,
+      workflow_state_id: this.workflowStateId,
     };
   }
 }
