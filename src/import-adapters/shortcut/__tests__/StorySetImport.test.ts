@@ -21,20 +21,20 @@ describe("story set import", () => {
   });
 
   it("creates an epic", async () => {
-    const storyImport = new StorySetImport(storySet, mockClient, 341314);
+    const storyImport = new StorySetImport(storySet, mockClient, { teamId: "341314", workflowStateId: 434124 });
     await storyImport.create();
     expect(mockClient.createEpic).toHaveBeenCalled();
   });
 
   it("creates two stories", async () => {
-    const storyImport = new StorySetImport(storySet, mockClient, 341314);
+    const storyImport = new StorySetImport(storySet, mockClient, { teamId: " 341314", workflowStateId: 434124 });
     await storyImport.create();
     expect(mockClient.createStory).toHaveBeenCalledTimes(2);
   });
 
   it("does not create an epic redundantly", async () => {
     mockClient.listEpics = jest.fn().mockResolvedValue([{ id: 1234123, name: epicName }]);
-    const storyImport = new StorySetImport(storySet, mockClient, 341314);
+    const storyImport = new StorySetImport(storySet, mockClient, { teamId: " 341314", workflowStateId: 434124 });
     await storyImport.create();
     expect(mockClient.createEpic).not.toHaveBeenCalled();
   });

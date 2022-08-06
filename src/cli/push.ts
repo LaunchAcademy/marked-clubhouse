@@ -3,11 +3,11 @@ import fs from "fs";
 import chalk from "chalk";
 import emoji from "node-emoji";
 import StoryParser from "../markdown/StoryParser";
-import Client from "../import-adapters/clubhouse/Client";
+import Client from "../import-adapters/shortcut/Client";
 
 import configuration from "../configuration";
 import normalizeStorySet from "../markdown/normalizeStorySet";
-import StorySetImport from "../import-adapters/clubhouse/StorySetImport";
+import StorySetImport from "../import-adapters/shortcut/StorySetImport";
 
 type PrecheckError = {
   message: string;
@@ -22,25 +22,25 @@ const fileExists = (markdownFile): PrecheckError | undefined => {
   return undefined;
 };
 
-const clubhouseTokenSet = (): PrecheckError | undefined => {
-  if (configuration.clubhouse.apiToken?.trim() === "") {
+const shortcutTokenSet = (): PrecheckError | undefined => {
+  if (configuration.shortcut.apiToken?.trim() === "") {
     return {
-      message: "Clubhouse Token not set.",
+      message: "Shortcut Token not set.",
     };
   }
   return undefined;
 };
 
-const clubhouseProjectSet = (): PrecheckError | undefined => {
-  if (!configuration.clubhouse.projectId) {
+const shortcutTeamIdSet = (): PrecheckError | undefined => {
+  if (!configuration.shortcut.teamId) {
     return {
-      message: "Clubhouse Project ID not set.",
+      message: "Shortcut Team ID not set.",
     };
   }
   return undefined;
 };
 
-const pushPrechecks = [fileExists, clubhouseTokenSet, clubhouseProjectSet];
+const pushPrechecks = [fileExists, shortcutTokenSet, shortcutTeamIdSet];
 
 const processPush = async (markdownFile: string) => {
   let errors: string[] = [];
@@ -65,7 +65,11 @@ const processPush = async (markdownFile: string) => {
       if (storySet.epicMap.size > 0) {
         console.log(chalk.yellow(`${storySet.epicMap.size} epic(s) found`));
       }
-      const setImport = new StorySetImport(storySet, Client.factory(), configuration.clubhouse.projectId);
+      const setImport = new StorySetImport(storySet, Client.factory(), {
+        projectId: configuration.shortcut.projectId,
+        teamId: configuration.shortcut.teamId,
+        workflowStateId: parseInt(configuration.shortcut.workflowStateId, 10),
+      });
       await setImport.create();
     } else {
       chalk.red("No stories found.");
