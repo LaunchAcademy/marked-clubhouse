@@ -3,6 +3,9 @@
   "version": "0.0.1",
   "description": "a markdown importer for clubhouse",
   "main": "index.js",
+  "bin": {
+    "marked-stories": "./bin/marked-stories"
+  },
   "repository": "https://github.com/launchacademy/marked-clubhouse",
   "author": "Dan Pickett",
   "license": "MIT",
