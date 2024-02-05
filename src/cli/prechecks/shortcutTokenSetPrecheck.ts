@@ -1,3 +1,6 @@
+import { PrecheckError } from "../PrecheckError";
+import configuration from "../../configuration";
+
 export const shortcutTokenSetPrecheck = (): PrecheckError | undefined => {
   if (configuration.shortcut.apiToken?.trim() === "") {
     return {

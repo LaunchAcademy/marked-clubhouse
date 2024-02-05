@@ -1,5 +1,5 @@
 import fs from "fs";
-import { PrecheckError } from "./PrecheckError";
+import { PrecheckError } from "../PrecheckError";
 
 export const fileExistsPrecheck = (markdownFile: string): PrecheckError | undefined => {
   if (!fs.existsSync(markdownFile)) {

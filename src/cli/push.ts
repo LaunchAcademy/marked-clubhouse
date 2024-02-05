@@ -1,5 +1,4 @@
 import { Command } from "commander";
-import fs from "fs";
 import chalk from "chalk";
 import emoji from "node-emoji";
 import StoryParser from "../markdown/StoryParser";
