@@ -17,7 +17,7 @@
     "@types/got": "^9.6.11",
     "@types/node": "^14.0.12",
     "@useshortcut/client": "^1.0.0",
-    "axios": "^0.27.2",
+    "axios": "^1.6.0",
     "commander": "^5.1.0",
     "got": "^11.8.5",
     "mdast-builder": "^1.1.1",
