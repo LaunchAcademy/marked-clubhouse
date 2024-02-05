@@ -1,4 +1,5 @@
 import Story from "../Story";
+import Epic from "../Epic";
 
 describe("Markdown Story", () => {
   let story: Story;
@@ -9,7 +10,7 @@ describe("Markdown Story", () => {
     story = new Story({
       name: storyName,
       description: storyDescription,
-      epicName: storyEpicName,
+      epic: new Epic({name: storyEpicName}),
     });
   });
 
@@ -21,6 +22,7 @@ describe("Markdown Story", () => {
   });
 
   it("has an epicName", () => {
-    expect(story.epicName).toEqual(storyEpicName);
+    expect(story.epic).toBeDefined();
+    expect(story.epic?.name).toEqual(storyEpicName);
   });
 });

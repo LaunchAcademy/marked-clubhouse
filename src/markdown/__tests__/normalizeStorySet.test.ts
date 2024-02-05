@@ -1,10 +1,12 @@
 import Story from "../Story";
 import normalizeStorySet from "../normalizeStorySet";
+import Epic from "../Epic";
 
 describe("normalize story set", () => {
   const epicName = "Epic One";
-  const storyA = new Story({ name: "first story", epicName });
-  const storyB = new Story({ name: "second story", epicName });
+  const epic = new Epic({ name: epicName });
+  const storyA = new Story({ name: "first story", epic });
+  const storyB = new Story({ name: "second story", epic });
 
   beforeEach(() => {});
   it("populates the epic reference", () => {
