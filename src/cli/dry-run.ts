@@ -1,18 +1,12 @@
 import { Command } from "commander";
-import fs from "fs";
 import chalk from "chalk";
 import emoji from "node-emoji";
 import StoryParser from "../markdown/StoryParser";
-import Client from "../import-adapters/shortcut/Client";
 
-import configuration from "../configuration";
 import normalizeStorySet from "../markdown/normalizeStorySet";
-import StorySetImport from "../import-adapters/shortcut/StorySetImport";
-import { shortcutTeamSetPrecheck } from "./prechecks/shortcutTeamSetPrecheck";
 import { fileExistsPrecheck } from "./prechecks/fileExistsPrecheck";
-import { shortcutTokenSetPrecheck } from "./prechecks/shortcutTokenSetPrecheck";
 
-const pushPrechecks = [fileExistsPrecheck, shortcutTokenSetPrecheck, shortcutTeamSetPrecheck];
+const pushPrechecks = [fileExistsPrecheck];
 
 const processPush = async (markdownFile: string) => {
   let errors: string[] = [];
@@ -37,12 +31,6 @@ const processPush = async (markdownFile: string) => {
       if (storySet.epicMap.size > 0) {
         console.log(chalk.yellow(`${storySet.epicMap.size} epic(s) found`));
       }
-      const setImport = new StorySetImport(storySet, Client.factory(), {
-        projectId: configuration.shortcut.projectId,
-        teamId: configuration.shortcut.teamId,
-        workflowStateId: parseInt(configuration.shortcut.workflowStateId, 10),
-      });
-      await setImport.create();
     } else {
       chalk.red("No stories found.");
     }
@@ -50,6 +38,6 @@ const processPush = async (markdownFile: string) => {
 };
 
 export default () => {
-  const program = new Command("push");
-  return program.command("push <markdownFile>").description("push a markdown file to a remote").action(processPush);
+  const program = new Command("dry-run");
+  return program.command("dry-run <markdownFile>").description("parse a file and get story and epic counts").action(processPush);
 };
