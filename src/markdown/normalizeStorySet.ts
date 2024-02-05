@@ -5,12 +5,12 @@ import StorySet from "./StorySet";
 function normalizeStorySet(stories: Story[]): StorySet {
   const epicMap = new Map<string, Epic>();
   stories.forEach((story) => {
-    if (story.epicName) {
-      const { epicName } = story;
+    if (story.epic && story.epic.name) {
+      const epicName = story.epic.name;
       let epic: Epic | undefined = epicMap.get(epicName);
       if (!epic) {
-        epic = new Epic({ name: story.epicName });
-        epicMap.set(story.epicName, epic);
+        epic = new Epic({ name: epicName });
+        epicMap.set(epicName, epic);
       }
       story.epic = epic;
     }

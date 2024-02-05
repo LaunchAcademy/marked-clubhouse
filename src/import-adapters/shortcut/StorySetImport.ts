@@ -25,11 +25,11 @@ class StorySetImport {
   }
 
   async create() {
-    const clubhouseEpics = await this.client.listEpics();
+    const shortcutEpics = await this.client.listEpics();
 
     // build a list of persisted epics
     const epicNameIdMap = new Map<string, number>();
-    clubhouseEpics.forEach((clubhouseEpic) => {
+    shortcutEpics.forEach((clubhouseEpic) => {
       epicNameIdMap.set(clubhouseEpic.name, clubhouseEpic.id);
     });
 
